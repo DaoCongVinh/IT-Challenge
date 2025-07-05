@@ -1,0 +1,187 @@
+/* ===== ABOUT PAGE MODERN STYLES ===== */
+.about-header {
+  background: linear-gradient(120deg, #2563eb 0%, #38bdf8 100%);
+  color: #fff;
+  text-align: center;
+  padding: 4rem 0 3rem 0;
+  border-radius: 0 0 2.5rem 2.5rem;
+  box-shadow: 0 8px 32px 0 rgba(37,99,235,0.13);
+  margin-bottom: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.about-header h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.7rem;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+.about-header p {
+  font-size: 1.2rem;
+  color: #e0e7ff;
+  opacity: 0.93;
+}
+
+#about-head.section-p1 {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  background: #fff;
+  border-radius: 2rem;
+  box-shadow: 0 4px 24px 0 rgba(37,99,235,0.10);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+#about-head img {
+  width: 340px;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 12px 0 rgba(37,99,235,0.08);
+}
+#about-head div {
+  flex: 1;
+  min-width: 260px;
+}
+#about-head h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 1rem;
+}
+#about-head p {
+  color: #334155;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+}
+#about-head abbr {
+  color: #64748b;
+  font-size: 1rem;
+  font-style: italic;
+}
+#about-head marquee {
+  margin-top: 1.5rem;
+  background: #e0e7ff;
+  color: #2563eb;
+  border-radius: 1rem;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.08);
+}
+
+#feature.section-p1 {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.fe-box {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px 0 rgba(37,99,235,0.10);
+  padding: 2rem 1.5rem 1.2rem 1.5rem;
+  text-align: center;
+  width: 180px;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+}
+.fe-box img {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+.fe-box h6 {
+  color: #2563eb;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+}
+.fe-box:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 12px 48px 0 rgba(37,99,235,0.18);
+  z-index: 2;
+}
+
+#newsletter.section-p1 {
+  background: linear-gradient(120deg, #2563eb 0%, #38bdf8 100%);
+  color: #fff;
+  border-radius: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(37,99,235,0.13);
+  padding: 3rem 2rem 2.5rem 2rem;
+  margin: 3rem auto 0 auto;
+  max-width: 700px;
+  text-align: center;
+  border: 2px solid #e0e7ff55;
+  position: relative;
+}
+#newsletter .newstext h4 {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 1rem;
+  color: #fff;
+  letter-spacing: -0.01em;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+#newsletter .newstext p {
+  color: #e0e7ff;
+  font-size: 1.15rem;
+  margin-bottom: 2rem;
+  opacity: 0.93;
+}
+#newsletter .form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+}
+#newsletter input[type="text"],
+#newsletter input[type="email"] {
+  border: none;
+  padding: 1rem 1.3rem;
+  font-size: 1.1rem;
+  border-radius: 2rem 0 0 2rem;
+  outline: none;
+  background: #fff;
+  color: #1e293b;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.10);
+  transition: background 0.2s;
+  width: 70%;
+}
+#newsletter input[type="text"]:focus,
+#newsletter input[type="email"]:focus {
+  background: #e0e7ff33;
+}
+#newsletter button {
+  padding: 1rem 2.2rem;
+  background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 0 2rem 2rem 0;
+  box-shadow: 0 4px 24px 0 rgba(37,99,235,0.13);
+  transition: all 0.18s;
+  cursor: pointer;
+}
+#newsletter button:hover {
+  background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+  color: #fff;
+  transform: scale(1.06);
+  box-shadow: 0 8px 32px 0 rgba(37,99,235,0.18);
+}
+@media (max-width: 900px) {
+  .about-header { padding: 2rem 0 1.2rem 0; border-radius: 0 0 1.2rem 1.2rem; }
+  #about-head.section-p1 { flex-direction: column; gap: 1.2rem; padding: 1.2rem; }
+  #about-head img { width: 100%; max-width: 320px; }
+  #feature.section-p1 { gap: 1rem; }
+  .fe-box { width: 100%; max-width: 180px; }
+  #newsletter.section-p1 { padding: 1.5rem 0.5rem 1.2rem 0.5rem; border-radius: 1rem; }
+  #newsletter .newstext h4 { font-size: 1.2rem; }
+  #newsletter .form { flex-direction: column; gap: 0.5rem; }
+  #newsletter input[type="text"],
+  #newsletter input[type="email"] { width: 100%; border-radius: 2rem; }
+  #newsletter button { width: 100%; border-radius: 2rem; }
+} 

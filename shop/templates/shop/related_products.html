@@ -1,0 +1,48 @@
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/related_products.css' %}">
+{% endblock %}
+
+<h4 class="related-products-title">Sản Phẩm Liên Quan</h4>
+<div class="carousel-container">
+    <button class="carousel-control prev" onclick="moveCarousel(-1)">&#10094;</button>
+    <div class="carousel">
+        {% if related_products %}
+            {% for product in related_products %}
+                {% if forloop.counter0|divisibleby:3 %}
+                    <div class="carousel-item">
+                {% endif %}
+                <div class="pro">
+                    <div class="img-container">
+                        <a href="{% url 'product_detail' product_id=product.id %}">
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        </a>
+                    </div>
+                    <div class="des">
+                        <span>{{ product.brand }}</span>
+                        <h5>{{ product.name }}</h5>
+                        <div class="star">
+                            {% for i in ""|ljust:product.rating %}
+                                <i class='bx bxs-star'></i>
+                            {% endfor %}
+                        </div>
+                        <h4>
+                            {% if product.is_discounted %}
+                                <h3 style="font-size: 16px; text-decoration: line-through; color: gray; font-weight: normal;">₫{{ product.formatted_price}}</h3>
+                                <h2 style="font-size: 20px; color: red; font-weight: bold;">₫{{ product.formatted_discounted_price }}</h2>
+                            {% else %}
+                                <h2 style="font-size: 20px;">₫{{ product.formatted_price}}</h2>
+                            {% endif %}
+                        </h4>
+                    </div>
+                </div>
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No products</p>
+        {% endif %}
+    </div>
+    <button class="carousel-control next" onclick="moveCarousel(1)">&#10095;</button>
+</div>

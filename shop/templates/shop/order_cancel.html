@@ -1,0 +1,18 @@
+{% extends 'shop/base.html' %}
+{% block title %}Xác nhận hủy đơn hàng{% endblock %}
+
+{% block content %}
+<section id="cancel-order" class="section-p1">
+    <div class="cancel-message">
+        <h2>Bạn có chắc chắn muốn hủy đơn hàng?</h2>
+        <p>Mã đơn hàng: <strong>{{ order.id }}</strong></p>
+        <p>Chi tiết đơn hàng này sẽ không thể khôi phục sau khi hủy.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
+            <a href="{% url 'order_detail' order.id %}" class="btn btn-info">Quay lại</a>
+        </form>
+    </div>
+</section>
+{% endblock %}

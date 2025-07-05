@@ -1,0 +1,50 @@
+{%load static%}
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{%static 'css/style.css'%}">
+    </head>
+    <body>
+        <section id="header">
+            <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" class="logo" alt=""></a>
+            <div class="search-bar">
+                <form method="GET" action="{% url 'product_search' %}">
+                    <div class="search-container">
+                        <i class='bx bx-search'></i>
+                        <input class="search-input" type="search" name="search">
+                    </div>
+                </form>
+            </div>
+            <div>
+                <ul id="navbar">
+                    <li><a class="active" href="{% url 'home' %}">Trang chủ</a></li>
+                    <li><a href="{% url 'shop' %}">Sản phẩm</a></li>
+                    <li><a href="{% url 'blog' %}">Tin tức</a></li>
+                    <li><a href="{% url 'about' %}">Về chúng tôi</a></li>
+                    <li><a href="{% url 'contact' %}">Liên hệ</a></li>
+                    <li><a href="{% url 'order_history' %}">Đơn hàng</a></li>
+                    <li id="lg-bag"><a href="{% url 'cart' %}"><i class='bx bx-shopping-bag'></i></a></li>
+                    <li id="user-icon"><a href="{% url 'login' %}"><i class='bx bx-user-circle'></i></a></li>
+                </ul>
+            </div>
+            <div id="mobile">
+                <a href="{% url 'cart' %}"><i class='bx bx-shopping-bag'></i></a>
+                <i id="bar" class='bx bx-menu'></i>
+            </div>
+        </section>
+        
+        
+        <script src="" async defer></script>
+    </body>
+</html>

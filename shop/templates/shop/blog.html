@@ -1,0 +1,47 @@
+{% extends 'shop/base.html' %}
+{% load static%}
+{% block title %}Contact{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% endblock %}
+{% block content %}
+<section id="page-header" class="blog-header">
+    <h2>#readmore</h2>
+    <p>Khám phá nhiều hơn về các sản phẩm của chúng tôi!</p>
+</section>
+
+<section id="blog">
+    {% for post in blog_posts %}
+    <div class="blog-box">
+        <div class="blog-img">
+            <img src="{% static post.image %}" alt="">
+        </div>
+        <div class="blog-details">
+            <h4>{{ post.title }}</h4>
+            <p>{{ post.content }}</p>
+            <a href="#">XEM TIẾP</a>
+        </div>
+        <h1>{{ post.date }}</h1>
+    </div>
+    {% endfor %}
+</section>
+
+<section id="pagination" class="section-p1">
+    <a href="#">1</a>
+    <a href="#"><i class='bx bx-right-arrow-alt'></i></a>
+</section>
+
+<section class="blog-newsletter">
+  <div class="newsletter-left">
+    <h4>Đăng ký nhận bản tin</h4>
+    <p>Nhận thông tin cập nhật qua E-mail về cửa hàng mới nhất của chúng tôi và <span>ưu đãi đặc biệt.</span></p>
+  </div>
+  <div class="newsletter-right">
+    <form class="newsletter-form">
+      <input type="email" placeholder="Nhập email của bạn">
+      <button type="submit"><i class='bx bx-send'></i> Đăng ký</button>
+    </form>
+    <span class="newsletter-icon"><i class="fa fa-envelope"></i></span>
+  </div>
+</section>
+{% endblock %}

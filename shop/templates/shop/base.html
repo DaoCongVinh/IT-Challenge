@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BaRoiBeo - Thời trang hiện đại{% endblock %}</title>
+    <meta name="description" content="{% block description %}BaRoiBeo - Cửa hàng thời trang online với những sản phẩm chất lượng cao, thiết kế hiện đại và giá cả hợp lý{% endblock %}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'img/icon1.png' %}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'css/related_products.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product-list.css' %}">
+
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'img/logo.png' %}" alt="BaRoiBeo" class="logo">
+                </a>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <form method="GET" action="{% url 'product_search' %}" class="search-form">
+                        <div class="search-input-group">
+                            <i class='bx bx-search search-icon'></i>
+                            <input type="search" name="search" class="search-input" placeholder="Tìm kiếm sản phẩm...">
+                            <button type="submit" class="search-btn">
+                                <i class='bx bx-search'></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Navigation Menu -->
+                <div class="navbar-nav ms-auto">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                                <i class='bx bx-home-alt'></i>
+                                <span>Trang chủ</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'shop' %}active{% endif %}" href="{% url 'shop' %}">
+                                <i class='bx bx-store'></i>
+                                <span>Sản phẩm</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'blog' %}active{% endif %}" href="{% url 'blog' %}">
+                                <i class='bx bx-news'></i>
+                                <span>Tin tức</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                                <i class='bx bx-info-circle'></i>
+                                <span>Về chúng tôi</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                                <i class='bx bx-envelope'></i>
+                                <span>Liên hệ</span>
+                            </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'order_history' %}active{% endif %}" href="{% url 'order_history' %}">
+                                    <i class='bx bx-package'></i>
+                                    <span>Đơn hàng</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- User Actions -->
+                <div class="user-actions">
+                    <a href="{% url 'cart' %}" class="cart-btn" title="Giỏ hàng">
+                        <i class='bx bx-shopping-bag'></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    
+                    {% if user.is_authenticated %}
+                        <div class="user-menu dropdown">
+                            <button class="user-btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class='bx bx-user-circle'></i>
+                                <span>{{ user.username }}</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'order_history' %}">Lịch sử đơn hàng</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Đăng xuất</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="login-btn">
+                            <i class='bx bx-user-circle'></i>
+                            <span>Đăng nhập</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <i class='bx bx-menu'></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hiển thị messages -->
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <img src="{% static 'img/logo.png' %}" alt="BaRoiBeo" class="footer-logo">
+                        <h5>Liên hệ với chúng tôi</h5>
+                        <p><i class='bx bx-map-pin'></i> Khoa CNTT, đường số 6, p. Linh Trung, q.Thủ Đức, tp.Thủ Đức</p>
+                        <p><i class='bx bx-phone'></i> 028 8789 8789 / 089 131 313</p>
+                        <p><i class='bx bx-time'></i> Thứ 2 - Thứ 6: 9.00am - 6.00pm</p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Về chúng tôi</h5>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'about' %}">Giới thiệu</a></li>
+                            <li><a href="#">Thông tin giao hàng</a></li>
+                            <li><a href="#">Chính sách bảo mật</a></li>
+                            <li><a href="#">Điều khoản & Điều kiện</a></li>
+                            <li><a href="{% url 'contact' %}">Liên hệ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Tài khoản</h5>
+                        <ul class="footer-links">
+                            {% if user.is_authenticated %}
+                                <li><a href="{% url 'order_history' %}">Lịch sử đơn hàng</a></li>
+                                <li><a href="{% url 'cart' %}">Giỏ hàng</a></li>
+                                <li><a href="#">Sản phẩm yêu thích</a></li>
+                                <li><a href="#">Theo dõi đơn hàng</a></li>
+                            {% else %}
+                                <li><a href="{% url 'login' %}">Đăng nhập</a></li>
+                                <li><a href="{% url 'register' %}">Đăng ký</a></li>
+                            {% endif %}
+                            <li><a href="#">Trợ giúp</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Theo dõi chúng tôi</h5>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class='bx bxl-facebook'></i></a>
+                            <a href="#" class="social-link"><i class='bx bxl-twitter'></i></a>
+                            <a href="#" class="social-link"><i class='bx bxl-instagram'></i></a>
+                            <a href="#" class="social-link"><i class='bx bxl-youtube'></i></a>
+                        </div>
+                        
+                        <h5 class="mt-4">Cài đặt ứng dụng</h5>
+                        <div class="app-downloads">
+                            <a href="#" class="app-btn">
+                                <img src="{% static 'img/pay/app.jpg' %}" alt="App Store">
+                            </a>
+                            <a href="#" class="app-btn">
+                                <img src="{% static 'img/pay/play.jpg' %}" alt="Google Play">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="footer-divider">
+            
+            <div class="footer-bottom">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="copyright">&copy; 2024 BaRoiBeo. Tất cả quyền được bảo lưu.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <img src="{% static 'img/pay/pay.png' %}" alt="Payment Methods" class="payment-methods">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-toggle" onclick="toggleChat()">
+            <i class='bx bx-chat'></i>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h6><i class='bx bx-support'></i> Hỗ trợ khách hàng</h6>
+                <button class="chat-close" onclick="toggleChat()">
+                    <i class='bx bx-x'></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    <div class="message-content">
+                        <h6>Xin chào! 👋</h6>
+                        <p>Tôi có thể giúp gì cho bạn?</p>
+                        <ul>
+                            <li>Nhập chiều cao và cân nặng để nhận gợi ý size (ví dụ: 170,65)</li>
+                            <li>Tìm kiếm sản phẩm: hot, new, cheap, expensive, sales</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Nhập tin nhắn...">
+                <button onclick="sendMessage(event)">
+                    <i class='bx bx-send'></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="{% static 'js/chat.js' %}"></script>
+    <script src="{% static 'js/product-list.js' %}"></script>
+    <script src="{% static 'js/shop.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

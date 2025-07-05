@@ -1,0 +1,65 @@
+{% extends 'shop/base.html' %}
+{% load static%}
+{% block title %}Contact{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
+{% endblock %}
+{% block content %}<section id="page-header" class="about-header">
+    <h2>#knowUs</h2>
+    <p>Biết về chúng tôi nhiều hơn nữa!!</p>
+</section>
+
+<section id="about-head" class="section-p1">
+    <img src="{% static 'img/about/a6.jpg' %}" alt="">
+    <div>
+        <h2>Chúng tôi là ai?</h2>
+        <p>ara là một trang web thương mại điện tử quần áo uy tín đã hoạt động từ năm 1998. Với hơn hai thập kỷ kinh nghiệm trong ngành thời trang, chúng tôi tự hào cung cấp tuyển chọn các loại quần áo hợp thời trang và chất lượng cao cho nam và nữ. Sứ mệnh của chúng tôi là cung cấp cho khách hàng trải nghiệm mua sắm trực tuyến liền mạch,
+            cung cấp nhiều loại quần áo, phụ kiện và giày dép thời trang.</p>
+
+        <abbr title="">Chúng tôi cam kết luôn cập nhật các xu hướng thời trang mới nhất và cung cấp dịch vụ khách hàng đặc biệt để đảm bảo khách hàng của chúng tôi trông và cảm thấy tốt nhất.</abbr>
+
+        <br><br>
+
+        <marquee bgcolor="#ccc" loop="-1" scrollamount="5" width="100%">Chúng tôi cam kết luôn cập nhật các xu hướng thời trang mới nhất và cung cấp dịch vụ khách hàng đặc biệt để đảm bảo khách hàng của chúng tôi trông và cảm thấy tốt nhất.</marquee>
+    </div>
+</section>
+<section id="feature" class="section-p1">
+    <div class="fe-box">
+        <img src="{% static 'img/features/f1.png' %}" alt="">
+        <h6>
+            Miễn phí vận chuyển</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'img/features/f2.png' %}" alt="">
+        <h6>Online OrderĐặt hàng trực tuyến</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'img/features/f3.png' %}" alt="">
+        <h6>Tiết kiệm tiền</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'img/features/f4.png' %}" alt="">
+        <h6>
+            Khuyến mãi</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'img/features/f5.png' %}" alt="">
+        <h6>Thân thiện</h6>
+    </div>
+    <div class="fe-box">
+        <img src="{% static 'img/features/f6.png' %}" alt="">
+        <h6>Hỗ trợ 24/7</h6>
+    </div>
+</section>
+
+<!-- <section id="newsletter" class="section-p1 section-m1">
+    <div class="newstext">
+        <h4>Đăng ký nhận bản tin</h4>
+        <p>Nhận thông tin cập nhật qua E-mail về cửa hàng mới nhất của chúng tôi và <span>ưu đãi đặc biệt.</span></p>
+    </div>
+    <div class="form">
+        <input type="text" placeholder="Your email address">
+        <button class="normal">Đăng kí</button>
+    </div>
+</section> -->
+{% endblock %}

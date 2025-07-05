@@ -1,0 +1,263 @@
+{% extends 'shop/base.html' %}
+{% load static%}
+{% block title %}Giỏ hàng{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+{% block content %}
+<section id="page-header" class="about-header">
+    <h2>#Giỏ hàng</h2>
+    <p>Quản lý sản phẩm trong giỏ hàng của bạn!</p>
+</section>
+
+<section id="cart" class="section-p1">
+    <table width="100%">
+        <thead>
+            <tr>
+                <td>Xóa</td>
+                <td>Hình ảnh</td>
+                <td>Sản phẩm</td>
+                <td>Size</td>
+                <td>Đơn Giá</td>
+                <td>Só lượng</td>
+                <td>Tổng</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% if cart and cart.items.all %}
+                {% for item in cart.items.all %}
+                <tr>
+                    <td>
+                        <button class="delete-btn" data-item-id="{{ item.id }}"><i class='bx bx-trash'></i></button>
+                    </td>
+                    <td><img src="{{ item.product.image_url }}" alt="{{ item.product.name }}"></td>
+                    <td>{{ item.product.name }}</td>
+                    <td><span class="size-badge">{{ item.size }}</span></td>
+                    {% if item.product.is_discounted %}
+                        <td class="price-cell" data-price="{{ item.product.price }}">{{ item.product.formatted_discounted_price }}₫</td>
+                    {% else %}
+                        <td class="price-cell" data-price="{{ item.product.price }}">{{ item.product.formatted_price }}₫</td>
+                    {% endif %}
+                    <td>
+                        <input 
+                            type="number" 
+                            class="quantity-input" 
+                            data-cart-id="{{ cart.id }}" 
+                            data-product-id="{{ item.product.id }}" 
+                            data-item-id="{{ item.id }}" 
+                            value="{{ item.quantity }}" 
+                            min="1">
+                    </td>
+                    <td class="total-cell" id="item-total-{{ item.id }}">{{ item.formatted_total_price }}₫</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6">Giỏ hàng của bạn đang trống.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</section>
+
+<section id="cart-add" class="section-p1">
+    <div id="subtotal">
+        <h3>Giỏ hàng</h3>
+        <table>
+            <tr>
+                <td>Tổng tiền</td>
+                <td id="cart-total">{{ total }}₫</td>
+            </tr>
+            <tr id="discount-row">
+                <td>Giảm giá</td>
+                <td id="cart-discount-amount">{{ discount }}₫</td>
+            </tr>
+            <tr>
+                <td><strong>Thành tiền</strong></td>
+                <td id="cart-grand-total"><strong>{{ real_total }}₫</strong></td>
+            </tr>
+        </table>
+    </div>
+    {% if user.is_authenticated %}
+        <div id="payment-form" class="section-p1">
+            <h3>THÔNG TIN NHẬN HÀNG</h3>
+            <form method="post" action="{% url 'order_payment' %}">
+                {% csrf_token %}
+                <label for="name">Tên</label>
+                <input type="text" id="name" name="name" placeholder="Tên người nhận" required>
+                
+                <label for="phone">Điện thoại liên lạc</label>
+                <input type="text" id="phone" name="phone" placeholder="Số điện thoại" required>
+                
+                <label for="province">Tỉnh/Thành phố</label>
+                <select id="province" name="province" required></select>
+                <label for="district">Quận/Huyện</label>
+                <select id="district" name="district" required disabled></select>
+                <label for="ward">Phường/Xã</label>
+                <select id="ward" name="ward" required disabled></select>
+                
+                <label for="address">Nhận hàng tại nhà/công ty/bưu điện</label>
+                <input type="text" id="address" name="address" placeholder="Địa chỉ nhận hàng (số nhà, tên đường, ... )" required>
+        
+                <label for="note">Ghi chú</label>
+                <textarea id="note" name="note" placeholder=""></textarea>
+                
+                <label for="cod">
+                    <input type="radio" id="cod" name="payment" value="COD" checked>
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+        
+                <label for="online">
+                    <input type="radio" id="momo" name="payment" value="MoMo">
+                    Thanh toán online bằng quét mã QR
+                </label>
+                
+                <button type="submit" id="payment-button" class="normal">ĐẶT HÀNG: GIAO HÀNG VÀ THU TIỀN TẬN NƠI</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Bạn cần <a href="{% url 'login' %}">đăng nhập</a> để đặt hàng.</p>
+    {% endif %}
+
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get references to the radio buttons and button
+        const codRadio = document.getElementById('cod');
+        const momoRadio = document.getElementById('momo');
+        const discountRow = document.getElementById('cart-discount-amount');
+        const paymentButton = document.getElementById('payment-button');
+
+
+        // Function to update button text
+        function updateButtonText() {
+            if (codRadio.checked) {
+                paymentButton.textContent = "ĐẶT HÀNG: GIAO HÀNG VÀ THU TIỀN TẬN NƠI";
+            } else if (momoRadio.checked) {
+                paymentButton.textContent = "ĐẶT HÀNG: THANH TOÁN ONLINE BẰNG QUÉT MÃ QR";
+            }
+        }
+
+        // Add event listeners to radio buttons
+        codRadio.addEventListener('change', updateButtonText);
+        momoRadio.addEventListener('change', updateButtonText);
+
+        // Initialize button text on page load
+        updateButtonText();
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get all delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+    
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-item-id');
+                
+                // Show confirmation dialog
+                if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+                    // Make AJAX call to delete endpoint
+                    fetch(`/delete_item/${itemId}/`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the row from the table
+                            const row = this.closest('tr');
+                            row.remove();
+                            
+                            // Update cart total
+                            const cartTotalElement = document.getElementById('cart-total');
+                            const cartGrandTotalElement = document.getElementById('cart-grand-total');
+                            if (cartTotalElement && cartGrandTotalElement) {
+                                const formattedTotal = new Intl.NumberFormat('vi-VN').format(data.cart_total) + '₫';
+                                cartTotalElement.textContent = formattedTotal;
+                                cartGrandTotalElement.innerHTML = `<strong>${formattedTotal}</strong>`;
+                            }
+                            
+                            // Check if cart is empty
+                            const tbody = document.querySelector('tbody');
+                            if (tbody.children.length === 0) {
+                                const emptyRow = document.createElement('tr');
+                                emptyRow.innerHTML = '<td colspan="7">Giỏ hàng của bạn đang trống.</td>';
+                                tbody.appendChild(emptyRow);
+                            }
+                        } else {
+                            throw new Error(data.message || 'Failed to remove item');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Không thể xóa sản phẩm khỏi giỏ hàng. Vui lòng thử lại.');
+                    });
+                }
+            });
+        });
+    });
+
+    
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const provinceSelect = document.getElementById('province');
+    const districtSelect = document.getElementById('district');
+    const wardSelect = document.getElementById('ward');
+
+    if (!provinceSelect || !districtSelect || !wardSelect) return;
+
+    // Lấy danh sách tỉnh/thành
+    fetch('https://provinces.open-api.vn/api/p/')
+        .then(res => res.json())
+        .then(provinces => {
+            provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>' +
+                provinces.map(p => `<option value="${p.code}">${p.name}</option>`).join('');
+            provinceSelect.disabled = false;
+        });
+
+    // Khi chọn tỉnh/thành, lấy quận/huyện
+    provinceSelect.addEventListener('change', function() {
+        const provinceCode = this.value;
+        if (!provinceCode) {
+            districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+            districtSelect.disabled = true;
+            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            wardSelect.disabled = true;
+            return;
+        }
+        fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>' +
+                    data.districts.map(d => `<option value="${d.code}">${d.name}</option>`).join('');
+                districtSelect.disabled = false;
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                wardSelect.disabled = true;
+            });
+    });
+
+    // Khi chọn quận/huyện, lấy phường/xã
+    districtSelect.addEventListener('change', function() {
+        const districtCode = this.value;
+        if (!districtCode) {
+            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+            wardSelect.disabled = true;
+            return;
+        }
+        fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
+            .then(res => res.json())
+            .then(data => {
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>' +
+                    data.wards.map(w => `<option value="${w.code}">${w.name}</option>`).join('');
+                wardSelect.disabled = false;
+            });
+    });
+});
+</script>
+
+{% endblock %}

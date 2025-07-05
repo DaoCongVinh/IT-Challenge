@@ -1,0 +1,82 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Thanh toán thành công{% endblock %}
+
+{% block content %}
+<section id="payment-success" class="section-p1">
+    <div class="success-message">
+        <h2>Thanh toán</h2>
+        <img src="{% static 'img/pay/qr.jpg' %}" alt="QR code">
+        <p>Quét mã QR trên để thanh toán</p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Quay lại trang chủ</a>
+    </div>
+
+    <style>
+        #payment-success {
+            text-align: center;
+            padding: 50px 20px;
+            background: #f9f9f9;
+        }
+        .success-message {
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            max-width: 700px;
+            margin: auto;
+        }
+        .success-message h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .success-message p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .success-message img {
+            max-width: 50%;
+            margin-top: 20px;
+        }
+    </style>
+</section>
+
+<script>
+    // Function to poll payment status
+    function checkPaymentStatus() {
+        fetch("{% url 'check_payment_status' %}", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.payment_success) {
+                window.location.href = "{% url 'payment_success' %}";
+            } else {
+                // Retry after 5 seconds if payment is not yet confirmed
+                setTimeout(checkPaymentStatus, 5000);
+            }
+        })
+        .catch(error => {
+            console.error("Error checking payment status:", error);
+        });
+    }
+
+    // Start polling on page load
+    document.addEventListener("DOMContentLoaded", checkPaymentStatus);
+</script>
+{% endblock %}

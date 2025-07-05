@@ -1,0 +1,270 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}BaRoiBeo - Thời trang hiện đại{% endblock %}
+
+{% block content %}
+<!-- Hero Banner Section -->
+<section class="hero-banner">
+  <div class="hero-banner-overlay"></div>
+  <div class="hero-banner-content">
+    <h1 class="hero-banner-title">Thời trang <span class="text-primary">hiện đại</span> cho cuộc sống năng động</h1>
+    <p class="hero-banner-subtitle">Khám phá bộ sưu tập mới nhất với những thiết kế độc đáo, chất liệu cao cấp và giá cả hợp lý.</p>
+    <a href="{% url 'shop' %}" class="btn btn-primary btn-lg">Mua sắm ngay</a>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="section bg-gray-50">
+    <div class="container">
+        <div class="section-title">
+            <h2>Tại sao chọn BaRoiBeo?</h2>
+            <p>Chúng tôi cam kết mang đến trải nghiệm mua sắm tốt nhất cho bạn</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5>Miễn phí vận chuyển</h5>
+                        <p>Giao hàng miễn phí cho đơn hàng từ 500K trở lên trên toàn quốc</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5>Chất lượng đảm bảo</h5>
+                        <p>Sản phẩm chất lượng cao với chính sách đổi trả trong 30 ngày</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class='bx bx-support'></i>
+                        </div>
+                        <h5>Hỗ trợ 24/7</h5>
+                        <p>Đội ngũ tư vấn chuyên nghiệp sẵn sàng hỗ trợ mọi lúc</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class='bx bx-credit-card'></i>
+                        </div>
+                        <h5>Thanh toán an toàn</h5>
+                        <p>Nhiều phương thức thanh toán với bảo mật thông tin tuyệt đối</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class='bx bx-gift'></i>
+                        </div>
+                        <h5>Ưu đãi hấp dẫn</h5>
+                        <p>Giảm giá lên đến 70% và nhiều chương trình khuyến mãi đặc biệt</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class='bx bx-trending-up'></i>
+                        </div>
+                        <h5>Xu hướng mới nhất</h5>
+                        <p>Cập nhật liên tục những xu hướng thời trang mới nhất</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hot Products Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Sản phẩm bán chạy</h2>
+            <p>Những sản phẩm được yêu thích nhất trong tháng</p>
+        </div>
+        
+        <div class="row">
+            {% if hot_products %}
+                {% for product in hot_products %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="product-card card h-100">
+                        <div class="product-image">
+                            <a href="{% url 'product_detail' product_id=product.id %}">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="card-img-top">
+                                {% if product.is_discounted %}
+                                    <div class="discount-badge">
+                                        -{{ product.discounted_percent }}%
+                                    </div>
+                                {% endif %}
+                            </a>
+                            <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                                <i class='bx bx-cart-add'></i>
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="product-brand">{{ product.brand }}</div>
+                            <h5 class="product-title">
+                                <a href="{% url 'product_detail' product_id=product.id %}">{{ product.name }}</a>
+                            </h5>
+                            
+                            <div class="product-rating">
+                                {% for i in ""|ljust:product.rating %}
+                                    <i class='bx bxs-star'></i>
+                                {% endfor %}
+                                <span class="rating-count">({{ product.rating }})</span>
+                            </div>
+                            
+                            <div class="product-price">
+                                {% if product.is_discounted %}
+                                    <span class="original-price">₫{{ product.formatted_price }}</span>
+                                    <span class="current-price">₫{{ product.formatted_discounted_price }}</span>
+                                {% else %}
+                                    <span class="current-price">₫{{ product.formatted_price }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Chưa có sản phẩm bán chạy.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{% url 'shop' %}" class="btn btn-primary btn-lg">
+                Xem tất cả sản phẩm
+                <i class='bx bx-right-arrow-alt'></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Banner Section -->
+<section class="banner-section">
+    <div class="container">
+        <div class="banner-content text-center">
+            <h2>Khuyến mãi đặc biệt</h2>
+            <h3>Giảm giá lên đến <span class="text-danger">70%</span></h3>
+            <p>Áp dụng cho tất cả sản phẩm áo phông và phụ kiện</p>
+            <a href="{% url 'shop' %}" class="btn btn-light btn-lg">
+                Khám phá ngay
+                <i class='bx bx-right-arrow-alt'></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- New Products Section -->
+<section class="section bg-gray-50">
+    <div class="container">
+        <div class="section-title">
+            <h2>Sản phẩm mới</h2>
+            <p>Những thiết kế mới nhất vừa được cập nhật</p>
+        </div>
+        
+        <div class="row">
+            {% if new_products %}
+                {% for product in new_products %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="product-card card h-100">
+                        <div class="product-image">
+                            <a href="{% url 'product_detail' product_id=product.id %}">
+                                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="card-img-top">
+                                {% if product.is_discounted %}
+                                    <div class="discount-badge">
+                                        -{{ product.discounted_percent }}%
+                                    </div>
+                                {% endif %}
+                                <div class="new-badge">Mới</div>
+                            </a>
+                            <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                                <i class='bx bx-cart-add'></i>
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="product-brand">{{ product.brand }}</div>
+                            <h5 class="product-title">
+                                <a href="{% url 'product_detail' product_id=product.id %}">{{ product.name }}</a>
+                            </h5>
+                            
+                            <div class="product-rating">
+                                {% for i in ""|ljust:product.rating %}
+                                    <i class='bx bxs-star'></i>
+                                {% endfor %}
+                                <span class="rating-count">({{ product.rating }})</span>
+                            </div>
+                            
+                            <div class="product-price">
+                                {% if product.is_discounted %}
+                                    <span class="original-price">₫{{ product.formatted_price }}</span>
+                                    <span class="current-price">₫{{ product.formatted_discounted_price }}</span>
+                                {% else %}
+                                    <span class="current-price">₫{{ product.formatted_price }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>Chưa có sản phẩm mới.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="newsletter-content">
+                    <h3>Đăng ký nhận thông tin</h3>
+                    <p>Nhận thông báo về sản phẩm mới, khuyến mãi đặc biệt và xu hướng thời trang mới nhất</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="newsletter-form">
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Nhập email của bạn">
+                        <button class="btn btn-primary" type="button">
+                            <i class='bx bx-send'></i>
+                            Đăng ký
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

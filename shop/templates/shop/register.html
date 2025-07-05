@@ -1,0 +1,54 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Đăng ký{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+{% block content %}
+<div class="register-container">
+    <div class="register-card">
+        <h2 class="register-title">ĐĂNG KÝ TÀI KHOẢN</h2>
+        <p class="register-desc">Nếu chưa có tài khoản vui lòng đăng ký tại đây</p>
+        
+        <!-- Hiển thị messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {{ rF.username }}
+                {% if rF.username.errors %}
+                    <div class="error-message">{{ rF.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ rF.email }}
+                {% if rF.email.errors %}
+                    <div class="error-message">{{ rF.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ rF.password1 }}
+                {% if rF.password1.errors %}
+                    <div class="error-message">{{ rF.password1.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ rF.password2 }}
+                {% if rF.password2.errors %}
+                    <div class="error-message">{{ rF.password2.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <button class="btn-register" type="submit">ĐĂNG KÝ</button>
+        </form>
+        <a href="{% url 'login' %}" class="login-link">Đã có tài khoản? Đăng nhập</a>
+    </div>
+</div>
+{% endblock %}

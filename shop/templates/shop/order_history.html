@@ -1,0 +1,78 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Lịch sử đặt hàng{% endblock %}
+
+{% block content %}
+    <section id="order-history" class="section-p1">
+        <h2>Lịch sử đặt hàng</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Chi tiết</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ order.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>₫{{ order.total_price }}</td>
+                    <td>
+                        {% if order.status == 'Delivered' %}
+                            <span style="color: green;">Đã chuyển</span>
+                        {% elif order.status == 'Shipping' %}
+                            <span style="color: orange;">Đang vận chuyển</span>
+                        {% else %}
+                            <span style="color: red;">Chưa chuyển</span>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'order_detail' order.id %}" class="btn btn-info">Chi tiết đơn hàng</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Bạn chưa có đơn hàng nào.</td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+        <style>
+            #order-history {
+                padding: 20px;
+                background: #f9f9f9;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            table th, table td {
+                padding: 10px;
+                border: 1px solid #ddd;
+                text-align: center;
+            }
+
+            table th {
+                background: #007bff;
+                color: white;
+            }
+
+            table a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+            table a:hover {
+                text-decoration: underline;
+            }
+        </style>
+    </section>
+{% endblock %}

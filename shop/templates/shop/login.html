@@ -1,0 +1,45 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block title %}Đăng nhập{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="login-avatar"><i class="fa-solid fa-user"></i></div>
+            <h2 class="login-title">ĐĂNG NHẬP</h2>
+            <p class="login-desc">Vui lòng đăng nhập để truy cập tài khoản của bạn</p>
+        </div>
+        
+        <!-- Hiển thị messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ lF.username }}
+                {% if lF.username.errors %}
+                    <div class="error-message">{{ lF.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ lF.password }}
+                {% if lF.password.errors %}
+                    <div class="error-message">{{ lF.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+            <button class="btn-login" type="submit">ĐĂNG NHẬP</button>
+        </form>
+        <a href="{% url 'register' %}" class="register-link">Chưa có tài khoản? Đăng ký</a>
+    </div>
+</div>
+{% endblock %}

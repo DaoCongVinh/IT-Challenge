@@ -1,0 +1,74 @@
+{% extends 'shop/base.html' %}
+{% load static%}
+{% block title %}Contact{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+{% endblock %}
+{% block content %}
+
+<section id="page-header" class="about-header">
+    <h2>#let's_talk</h2>
+    <p>Để lại lời nhắn cho chúng tôi, chúng tôi cần góp ý từ bạn!</p>
+</section>
+
+<section id="contact-details" class="section-p1">
+    <div class="details">
+        <span>KẾT NỐI VỚI NHAU</span>
+        <h2>Liên hệ với chúng tôi ngay hôm ngay</h2>
+        <h3>Văn phòng</h3>
+        <div>
+            <li>
+                <i class='bx bx-map-alt'></i>
+                <p>Khoa CNTT, đường số 6, phường Linh Trung, q.Thủ Đức, tp. Thủ Đức</p>
+            </li>
+            <li>
+                <i class='bx bx-envelope'></i>
+                <p>contact@example.com</p>
+            </li>
+            <li>
+                <i class='bx bxs-phone'></i>
+                <p>+012 345 6789</p>
+            </li>
+            <li>
+                <i class='bx bx-time-five'></i>
+                <p>Thứ 2 - Thứ 6: 9.00am - 6.00pm</p>
+            </li>
+        </div>
+    </div>
+
+    <div class="map">
+        <iframe src="https://www.google.com/maps/embed/v1/place?q=Khoa+Công+nghệ+Thông+tin,+ĐH+Nông+Lâm+TP.+HCM&key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</section>
+
+<!-- import form into html   -->
+<section id="form-details">
+    <form action="{% url 'saveContact' %}" method="post">
+        {% csrf_token %}
+        <span>ĐỂ LẠI LỜI NHẮN</span>
+        <h2>Cho chúng tôi nghe góp ý từ bạn</h2>
+        {{ cf.username }}   
+        {{ cf.email }}
+        {{ cf.subject }}
+        {{ cf.message }}
+        <button type="submit" class="normal">Gửi</button>
+    </form>
+    
+
+    <div class="people">
+        <div>
+            <img src="{% static 'img/people/1.png' %}" alt="">
+            <p><span>Công Vinh</span> Senior Marketing Manager <br> Phone: + 000 123 456 789 <br> Email: contact@example.com</p>
+        </div>
+        <div>
+            <img src="{% static 'img/people/2.png' %}" alt="">
+            <p><span>Tuấn Khoa</span> Senior Marketing Manager <br> Phone: + 000 123 456 789 <br> Email: contact@example.com</p>
+        </div>
+        <div>
+            <img src="{% static 'img/people/3.png' %}" alt="">
+            <p><span>Đình Hưng</span> Senior Marketing Manager <br> Phone: + 000 123 456 789 <br> Email: contact@example.com</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

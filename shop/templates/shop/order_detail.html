@@ -1,0 +1,126 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Chi tiết đơn hàng{% endblock %}
+
+{% block content %}
+<section id="order-details" class="section-p1">
+    <div class="order-message" style="width: 100%; max-width: 800px; margin: 0 auto;">
+        <h2>Chi tiết đơn hàng của bạn</h2>
+        <p>Mã đơn hàng: <strong>{{ order.id }}</strong></p>
+        <p>Tên khách hàng: <strong>{{ order.name }}</strong></p>
+        <p>Số điện thoại: <strong>{{ order.phone }}</strong></p>
+        <p>Địa chỉ giao hàng: <strong>{{ order.address }}</strong></p>
+        <p>Phương thức thanh toán: <strong>{{ order.get_payment_method_display }}</strong></p>
+        <p>Ghi chú: <strong>{{ order.note|default:"Không có" }}</strong></p>
+        <h3>Sản phẩm:</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.price|floatformat:0|intcomma }} VND</td>
+                        <td>{{ item.get_total_price|floatformat:0|intcomma }} VND</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">Không có sản phẩm trong đơn hàng này.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3"><strong>Tổng tiền hàng:</strong></td>
+                    <td><strong>{{ order.get_subtotal|floatformat:0|intcomma }} VND</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Giảm giá:</strong></td>
+                    <td><strong>{{ order.get_discount_amount|floatformat:0|intcomma }} VND</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="3"><strong>Tổng thanh toán:</strong></td>
+                    <td><strong>{{ order.get_final_total|floatformat:0|intcomma }} VND</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="order-actions">
+            {% if order.is_online_payment %}
+                <a href="{% url 'payment_scan' %}" class="btn btn-success">Thanh toán</a>
+            {% else %}
+                <a href="{% url 'order_success' %}" class="btn btn-success">Đặt hàng</a>
+            {% endif %}
+            <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger">Hủy đơn hàng</a>
+        </div>
+    </div>
+
+    <style>
+        #order-details {
+            text-align: center;
+            padding: 50px 20px;
+            background: #f9f9f9;
+        }
+        .order-message {
+            background: #fff;
+            padding: 30px;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            max-width: 700px;
+            margin: auto;
+            text-align: left;
+        }
+        .order-message h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .order-message table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .order-message table th, .order-message table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .order-message table tfoot td {
+            font-weight: bold;
+        }
+        .order-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .order-actions a {
+            margin: 0 10px;
+            padding: 10px 20px;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+    </style>
+</section>
+{% endblock %}

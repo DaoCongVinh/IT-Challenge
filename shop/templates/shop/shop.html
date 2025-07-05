@@ -1,0 +1,53 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% load rating_extras %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section id="page-header">
+    <h2>#stayhome</h2>
+    <p>Tiết kiệm với mã giảm giá lên đến 70% khi đặt hàng tại nhà!!</p>
+</section>
+
+<section id="product1" class="section-p1">
+    <div class="pro-container">
+        <p>Sản phẩm đang bày bán: {{ products|length }}</p>
+        {% for product in products %}
+        <div class="pro" onclick="window.location.href='{% url 'product_detail' product.id %}';">
+            <img class="shirt" src="{% static product.image_url %}" alt="">
+            <div class="des">
+                <span>{{ product.brand }}</span>
+                <h5>{{ product.name }}</h5>
+                <div class="star">
+                    {% for i in product.rating|star_range %}
+                    <i class='bx bxs-star'></i>
+                    {% endfor %}
+                </div>
+                <h4>₹{{ product.price }}</h4>
+            </div>
+            <button>
+                <i class='bx bx-cart cart'></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="pagination" class="section-p1">
+    <a href="#">1</a>
+    <a href="#">2</a>
+    <a href="#"><i class='bx bx-right-arrow-alt'></i></a>
+</section>
+
+<section id="newsletter" class="section-p1 section-m1">
+    <div class="newstext">
+        <h4>Sign Up For Newsletters</h4>
+        <p>Get E-mail updates about our latest shop and <span>special offers.</span></p>
+    </div>
+    <div class="form">
+        <input type="text" placeholder="Your email address">
+        <button class="normal">Sign Up</button>
+    </div>
+</section>
+{% endblock %}

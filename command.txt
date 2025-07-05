@@ -1,0 +1,9 @@
+Admin:
+tk: admin
+mk: admin123
+
+
+User:
+1. tk: hehe11 | mk: vinh123
+2. tk: congvinh | mk: 123
+....

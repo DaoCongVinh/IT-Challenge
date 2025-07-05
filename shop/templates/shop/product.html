@@ -1,0 +1,269 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Sản phẩm - BaRoiBeo{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>Sản phẩm</h1>
+                <p>Khám phá bộ sưu tập đa dạng với những thiết kế độc đáo</p>
+            </div>
+            <!-- <div class="col-lg-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-lg-end">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Trang chủ</a></li>
+                        <li class="breadcrumb-item active">Sản phẩm</li>
+                    </ol>
+                </nav>
+            </div> -->
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+{% if query %}
+<section class="search-results">
+    <div class="container">
+        <div class="alert alert-info">
+            <i class='bx bx-search'></i>
+            Kết quả tìm kiếm cho: <strong>"{{ query }}"</strong>
+            <span class="result-count">({{ products|length }} sản phẩm)</span>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Products Section -->
+<section class="products-section">
+    <div class="container">
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="filters-sidebar">
+                    <div class="filter-card card">
+                        <div class="card-header">
+                            <h5><i class='bx bx-filter-alt'></i> Bộ lọc</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Price Filter -->
+                            <div class="filter-group">
+                                <h6>Khoảng giá</h6>
+                                <div class="price-range">
+                                    <input type="range" class="form-range" min="0" max="1000000" step="100000" id="priceRange">
+                                    <div class="price-inputs">
+                                        <input type="number" class="form-control" placeholder="Từ" id="minPrice">
+                                        <span>-</span>
+                                        <input type="number" class="form-control" placeholder="Đến" id="maxPrice">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Brand Filter -->
+                            <div class="filter-group">
+                                <h6>Thương hiệu</h6>
+                                <div class="brand-filters">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="nike"> Nike
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="adidas"> Adidas
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="puma"> Puma
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="reebok"> Reebok
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Filter -->
+                            <div class="filter-group">
+                                <h6>Trạng thái</h6>
+                                <div class="status-filters">
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="hot"> Hot
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="new"> Mới
+                                    </label>
+                                    <label class="filter-checkbox">
+                                        <input type="checkbox" value="sale"> Giảm giá
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Clear Filters -->
+                            <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                                <i class='bx bx-refresh'></i> Xóa bộ lọc
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Grid -->
+            <div class="col-lg-9">
+                <!-- Products Header -->
+                <div class="products-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5>Hiển thị {{ products|length }} sản phẩm</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="products-controls">
+                                <div class="view-options">
+                                    <button class="btn btn-sm btn-outline-primary active" data-view="grid">
+                                        <i class='bx bx-grid-alt'></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" data-view="list">
+                                        <i class='bx bx-list-ul'></i>
+                                    </button>
+                                </div>
+                                <select class="form-select form-select-sm" id="sortSelect">
+                                    <option value="">Sắp xếp</option>
+                                    <option value="price-asc">Giá tăng dần</option>
+                                    <option value="price-desc">Giá giảm dần</option>
+                                    <option value="name-asc">Tên A-Z</option>
+                                    <option value="name-desc">Tên Z-A</option>
+                                    <option value="rating">Đánh giá cao nhất</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div class="products-grid" id="productsGrid">
+                    <div class="row">
+                        {% if products %}
+                            {% for product in products %}
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="product-card card h-100">
+                                    <div class="product-image">
+                                        <a href="{% url 'product_detail' product_id=product.id %}">
+                                            <img src="{{ product.image_url }}" alt="{{ product.name }}" class="card-img-top">
+                                            {% if product.is_discounted %}
+                                                <div class="discount-badge">
+                                                    -{{ product.discounted_percent }}%
+                                                </div>
+                                            {% endif %}
+                                            {% if product.status == 'New' %}
+                                                <div class="new-badge">Mới</div>
+                                            {% endif %}
+                                            {% if product.status == 'Hot' %}
+                                                <div class="hot-badge">Hot</div>
+                                            {% endif %}
+                                        </a>
+                                        <button class="add-to-cart-btn" data-product-id="{{ product.id }}">
+                                            <i class='bx bx-cart-add'></i>
+                                        </button>
+                                        <button class="quick-view-btn" data-product-id="{{ product.id }}">
+                                            <i class='bx bx-show'></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="card-body">
+                                        <div class="product-brand">{{ product.brand }}</div>
+                                        <h5 class="product-title">
+                                            <a href="{% url 'product_detail' product_id=product.id %}">{{ product.name }}</a>
+                                        </h5>
+                                        
+                                        <div class="product-rating">
+                                            {% for i in ""|ljust:product.rating %}
+                                                <i class='bx bxs-star'></i>
+                                            {% endfor %}
+                                            <span class="rating-count">({{ product.rating }})</span>
+                                        </div>
+                                        
+                                        <div class="product-price">
+                                            {% if product.is_discounted %}
+                                                <span class="original-price">₫{{ product.formatted_price }}</span>
+                                                <span class="current-price">₫{{ product.formatted_discounted_price }}</span>
+                                            {% else %}
+                                                <span class="current-price">₫{{ product.formatted_price }}</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="product-actions">
+                                            <button class="btn btn-primary btn-sm w-100" data-product-id="{{ product.id }}">
+                                                <i class='bx bx-cart-add'></i> Thêm vào giỏ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-12">
+                                <div class="no-products text-center">
+                                    <i class='bx bx-package'></i>
+                                    <h4>Không tìm thấy sản phẩm</h4>
+                                    <p>Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+                                    <a href="{% url 'shop' %}" class="btn btn-primary">
+                                        <i class='bx bx-refresh'></i> Xem tất cả sản phẩm
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                {% if products.has_other_pages %}
+                <nav aria-label="Product pagination" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if products.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ products.previous_page_number }}{% if query %}&search={{ query }}{% endif %}">
+                                    <i class='bx bx-chevron-left'></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for page_num in products.paginator.page_range %}
+                            {% if products.number == page_num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ page_num }}</span>
+                                </li>
+                            {% elif page_num > products.number|add:'-3' and page_num < products.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_num }}{% if query %}&search={{ query }}{% endif %}">{{ page_num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if products.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ products.next_page_number }}{% if query %}&search={{ query }}{% endif %}">
+                                    <i class='bx bx-chevron-right'></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xem nhanh sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="quickViewContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
