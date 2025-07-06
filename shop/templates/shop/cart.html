@@ -4,9 +4,12 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/cart.css' %}">
 {% endblock %}
+{% block extra_js %}
+    <script src="{% static 'js/address-api.js' %}"></script>
+{% endblock %}
 {% block content %}
 <section id="page-header" class="about-header">
-    <h2>#Giỏ hàng</h2>
+    <h2>Giỏ hàng</h2>
     <p>Quản lý sản phẩm trong giỏ hàng của bạn!</p>
 </section>
 
@@ -91,10 +94,15 @@
                 
                 <label for="province">Tỉnh/Thành phố</label>
                 <select id="province" name="province" required></select>
+                <input type="hidden" id="province_name" name="province_name">
+                
                 <label for="district">Quận/Huyện</label>
                 <select id="district" name="district" required disabled></select>
+                <input type="hidden" id="district_name" name="district_name">
+                
                 <label for="ward">Phường/Xã</label>
                 <select id="ward" name="ward" required disabled></select>
+                <input type="hidden" id="ward_name" name="ward_name">
                 
                 <label for="address">Nhận hàng tại nhà/công ty/bưu điện</label>
                 <input type="text" id="address" name="address" placeholder="Địa chỉ nhận hàng (số nhà, tên đường, ... )" required>
@@ -107,10 +115,10 @@
                     Thanh toán khi nhận hàng (COD)
                 </label>
         
-                <label for="online">
+                <!-- <label for="online">
                     <input type="radio" id="momo" name="payment" value="MoMo">
                     Thanh toán online bằng quét mã QR
-                </label>
+                </label> -->
                 
                 <button type="submit" id="payment-button" class="normal">ĐẶT HÀNG: GIAO HÀNG VÀ THU TIỀN TẬN NƠI</button>
             </form>
@@ -128,7 +136,6 @@
         const momoRadio = document.getElementById('momo');
         const discountRow = document.getElementById('cart-discount-amount');
         const paymentButton = document.getElementById('payment-button');
-
 
         // Function to update button text
         function updateButtonText() {
@@ -200,64 +207,48 @@
         });
     });
 
-    
-</script>
+    // Form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('#payment-form form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Kiểm tra địa chỉ bằng AddressAPI
+                if (window.addressAPI && !window.addressAPI.validateForm()) {
+                    e.preventDefault();
+                    return false;
+                }
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const provinceSelect = document.getElementById('province');
-    const districtSelect = document.getElementById('district');
-    const wardSelect = document.getElementById('ward');
+                // Kiểm tra các trường khác
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                
+                if (!name) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập tên người nhận!');
+                    document.getElementById('name').focus();
+                    return false;
+                }
 
-    if (!provinceSelect || !districtSelect || !wardSelect) return;
+                if (!phone) {
+                    e.preventDefault();
+                    alert('Vui lòng nhập số điện thoại!');
+                    document.getElementById('phone').focus();
+                    return false;
+                }
 
-    // Lấy danh sách tỉnh/thành
-    fetch('https://provinces.open-api.vn/api/p/')
-        .then(res => res.json())
-        .then(provinces => {
-            provinceSelect.innerHTML = '<option value="">Chọn tỉnh/thành</option>' +
-                provinces.map(p => `<option value="${p.code}">${p.name}</option>`).join('');
-            provinceSelect.disabled = false;
-        });
+                // Kiểm tra định dạng số điện thoại
+                const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
+                if (!phoneRegex.test(phone)) {
+                    e.preventDefault();
+                    alert('Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại Việt Nam.');
+                    document.getElementById('phone').focus();
+                    return false;
+                }
 
-    // Khi chọn tỉnh/thành, lấy quận/huyện
-    provinceSelect.addEventListener('change', function() {
-        const provinceCode = this.value;
-        if (!provinceCode) {
-            districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
-            districtSelect.disabled = true;
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-            wardSelect.disabled = true;
-            return;
-        }
-        fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`)
-            .then(res => res.json())
-            .then(data => {
-                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>' +
-                    data.districts.map(d => `<option value="${d.code}">${d.name}</option>`).join('');
-                districtSelect.disabled = false;
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-                wardSelect.disabled = true;
+                return true;
             });
-    });
-
-    // Khi chọn quận/huyện, lấy phường/xã
-    districtSelect.addEventListener('change', function() {
-        const districtCode = this.value;
-        if (!districtCode) {
-            wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
-            wardSelect.disabled = true;
-            return;
         }
-        fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`)
-            .then(res => res.json())
-            .then(data => {
-                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>' +
-                    data.wards.map(w => `<option value="${w.code}">${w.name}</option>`).join('');
-                wardSelect.disabled = false;
-            });
     });
-});
 </script>
 
 {% endblock %}

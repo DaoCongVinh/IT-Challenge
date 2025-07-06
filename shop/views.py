@@ -9,7 +9,7 @@ from django.db.models import Sum
 # views.py
 from .recommendation import ProductRecommendation
 
-from .models import Product,ContactForm,Cart,CartItem,Order,OrderItem
+from .models import Product,ContactForm,Cart,CartItem,Order,OrderItem, Address
 from .forms import Contact_Form , RegisterForm , LoginForm,PaymentForm
 import json
 from django.views import View
@@ -23,6 +23,7 @@ import openai
 import os
 from django.contrib.auth import logout as auth_logout
 from django.shortcuts import redirect
+import requests
 
 # ========================================
 # LOGOUT VIEW - Xử lý đăng xuất người dùng
@@ -386,9 +387,25 @@ def place_order(request):
         if form.is_valid():
             name = form.cleaned_data['name']
             phone = form.cleaned_data['phone']
-            address = form.cleaned_data['address']
+            address_detail = form.cleaned_data['address']
             note = form.cleaned_data.get('note', '')
             payment_method = form.cleaned_data['payment']
+            
+            # Lấy thông tin địa chỉ từ form
+            province_code = request.POST.get('province')
+            district_code = request.POST.get('district')
+            ward_code = request.POST.get('ward')
+            
+            # Tạo địa chỉ đầy đủ
+            full_address = address_detail
+            if province_code and district_code and ward_code:
+                try:
+                    # Có thể lưu thêm thông tin địa chỉ chi tiết vào database nếu cần
+                    # Hiện tại chỉ lưu địa chỉ dạng text
+                    full_address = f"{address_detail}"
+                except Exception as e:
+                    print(f"Error processing address: {e}")
+                    full_address = address_detail
 
             real_total = cart.get_cart_real_total()
 
@@ -396,11 +413,33 @@ def place_order(request):
                 user=request.user,
                 name=name,
                 phone=phone,
-                address=address,
+                address=full_address,
                 note=note,
                 payment_method=payment_method,
                 total_price=real_total
             )
+            
+            # Lưu thông tin địa chỉ chi tiết
+            if province_code and district_code and ward_code:
+                try:
+                    # Lấy tên địa chỉ từ API hoặc từ form
+                    province_name = request.POST.get('province_name', '')
+                    district_name = request.POST.get('district_name', '')
+                    ward_name = request.POST.get('ward_name', '')
+                    
+                    Address.objects.create(
+                        order=order,
+                        province_code=province_code,
+                        province_name=province_name,
+                        district_code=district_code,
+                        district_name=district_name,
+                        ward_code=ward_code,
+                        ward_name=ward_name,
+                        address_detail=address_detail
+                    )
+                except Exception as e:
+                    print(f"Error saving address detail: {e}")
+            
             for item in cart.items.all():
                 OrderItem.objects.create(
                     order=order,
@@ -476,3 +515,14 @@ def cart_items_count(request):
     if cart:
         count = cart.get_cart_items_count()
     return JsonResponse({'cart_items_count': count})
+
+@csrf_exempt
+def proxy_provinces_api(request):
+    url = request.GET.get('url')
+    if not url or not url.startswith('https://provinces.open-api.vn/api/'):
+        return JsonResponse({'error': 'Invalid URL'}, status=400)
+    try:
+        resp = requests.get(url, timeout=5, verify=False)  # verify=False để bỏ qua SSL lỗi
+        return JsonResponse(resp.json(), safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

@@ -247,7 +247,35 @@ class Order(models.Model):
         super().save(*args, **kwargs)
         self.total_price = self.get_total_price()
         super().save(update_fields=['total_price'])
+
+
+class Address(models.Model):
+    """Model lưu thông tin địa chỉ chi tiết từ API provinces.open-api.vn"""
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='address_detail')
+    province_code = models.CharField(max_length=10, blank=True, null=True)
+    province_name = models.CharField(max_length=100, blank=True, null=True)
+    district_code = models.CharField(max_length=10, blank=True, null=True)
+    district_name = models.CharField(max_length=100, blank=True, null=True)
+    ward_code = models.CharField(max_length=10, blank=True, null=True)
+    ward_name = models.CharField(max_length=100, blank=True, null=True)
+    address_detail = models.CharField(max_length=255, blank=True, null=True)
     
+    def get_full_address(self):
+        """Trả về địa chỉ đầy đủ"""
+        parts = []
+        if self.address_detail:
+            parts.append(self.address_detail)
+        if self.ward_name:
+            parts.append(self.ward_name)
+        if self.district_name:
+            parts.append(self.district_name)
+        if self.province_name:
+            parts.append(self.province_name)
+        return ', '.join(parts)
+    
+    def __str__(self):
+        return f"Địa chỉ đơn hàng #{self.order.id}"
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
