@@ -138,3 +138,10 @@ VNPAY_RETURN_URL = 'http://localhost:8000/vnpay_return/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+#deploy
+DEBUG = False
+ALLOWED_HOSTS = ['Vinh2004.pythonanywhere.com']
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
