@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db.models import Sum
@@ -24,6 +25,7 @@ import os
 from django.contrib.auth import logout as auth_logout
 from django.shortcuts import redirect
 import requests
+from .vnpay import build_vnpay_url, verify_vnpay_response
 
 # ========================================
 # LOGOUT VIEW - Xử lý đăng xuất người dùng
@@ -378,79 +380,95 @@ def payment(request):
     return render(request, 'shop/cart.html', {'cart': cart, 'form': form})
 
 # Đảm bảo hàm place_order tồn tại và chỉ lưu đơn hàng local
+@csrf_exempt
 @login_required
 def place_order(request):
-    cart = get_or_create_cart(request)
-
     if request.method == 'POST':
         form = PaymentForm(request.POST)
         if form.is_valid():
-            name = form.cleaned_data['name']
-            phone = form.cleaned_data['phone']
-            address_detail = form.cleaned_data['address']
-            note = form.cleaned_data.get('note', '')
             payment_method = form.cleaned_data['payment']
-            
-            # Lấy thông tin địa chỉ từ form
-            province_code = request.POST.get('province')
-            district_code = request.POST.get('district')
-            ward_code = request.POST.get('ward')
-            
-            # Tạo địa chỉ đầy đủ
-            full_address = address_detail
-            if province_code and district_code and ward_code:
-                try:
-                    # Có thể lưu thêm thông tin địa chỉ chi tiết vào database nếu cần
-                    # Hiện tại chỉ lưu địa chỉ dạng text
-                    full_address = f"{address_detail}"
-                except Exception as e:
-                    print(f"Error processing address: {e}")
-                    full_address = address_detail
-
-            real_total = cart.get_cart_real_total()
-
-            order = Order.objects.create(
-                user=request.user,
-                name=name,
-                phone=phone,
-                address=full_address,
-                note=note,
-                payment_method=payment_method,
-                total_price=real_total
-            )
-            
-            # Lưu thông tin địa chỉ chi tiết
-            if province_code and district_code and ward_code:
-                try:
-                    # Lấy tên địa chỉ từ API hoặc từ form
-                    province_name = request.POST.get('province_name', '')
-                    district_name = request.POST.get('district_name', '')
-                    ward_name = request.POST.get('ward_name', '')
-                    
-                    Address.objects.create(
-                        order=order,
-                        province_code=province_code,
-                        province_name=province_name,
-                        district_code=district_code,
-                        district_name=district_name,
-                        ward_code=ward_code,
-                        ward_name=ward_name,
-                        address_detail=address_detail
-                    )
-                except Exception as e:
-                    print(f"Error saving address detail: {e}")
-            
-            for item in cart.items.all():
-                OrderItem.objects.create(
-                    order=order,
-                    product=item.product,
-                    size=item.size,
-                    quantity=item.quantity,
-                    price=item.product.get_current_price()
+            if payment_method == 'VNPAY':
+                # Tạo order ở trạng thái Pending
+                order = Order.objects.create(
+                    user=request.user,
+                    name=form.cleaned_data['name'],
+                    phone=form.cleaned_data['phone'],
+                    address=form.cleaned_data['address'],
+                    note=form.cleaned_data['note'],
+                    payment_method='VNPAY',
+                    total_price=0,  # Sẽ cập nhật sau khi thanh toán thành công
+                    status='Pending',
                 )
-            cart.items.all().delete()
-            print(f"Order created local only: {order.id}")
-            return redirect('order_detail', order_id=order.id)
+                # Redirect sang vnpay_payment với order_id
+                return redirect('vnpay_payment', order_id=order.id)  # Sẽ truyền order_id qua session hoặc query param
+            else:
+                # Xử lý như cũ cho COD/MoMo
+                name = form.cleaned_data['name']
+                phone = form.cleaned_data['phone']
+                address_detail = form.cleaned_data['address']
+                note = form.cleaned_data.get('note', '')
+                payment_method = form.cleaned_data['payment']
+                
+                # Lấy thông tin địa chỉ từ form
+                province_code = request.POST.get('province')
+                district_code = request.POST.get('district')
+                ward_code = request.POST.get('ward')
+                
+                # Tạo địa chỉ đầy đủ
+                full_address = address_detail
+                if province_code and district_code and ward_code:
+                    try:
+                        # Có thể lưu thêm thông tin địa chỉ chi tiết vào database nếu cần
+                        # Hiện tại chỉ lưu địa chỉ dạng text
+                        full_address = f"{address_detail}"
+                    except Exception as e:
+                        print(f"Error processing address: {e}")
+                        full_address = address_detail
+
+                real_total = cart.get_cart_real_total()
+
+                order = Order.objects.create(
+                    user=request.user,
+                    name=name,
+                    phone=phone,
+                    address=full_address,
+                    note=note,
+                    payment_method=payment_method,
+                    total_price=real_total
+                )
+                
+                # Lưu thông tin địa chỉ chi tiết
+                if province_code and district_code and ward_code:
+                    try:
+                        # Lấy tên địa chỉ từ API hoặc từ form
+                        province_name = request.POST.get('province_name', '')
+                        district_name = request.POST.get('district_name', '')
+                        ward_name = request.POST.get('ward_name', '')
+                        
+                        Address.objects.create(
+                            order=order,
+                            province_code=province_code,
+                            province_name=province_name,
+                            district_code=district_code,
+                            district_name=district_name,
+                            ward_code=ward_code,
+                            ward_name=ward_name,
+                            address_detail=address_detail
+                        )
+                    except Exception as e:
+                        print(f"Error saving address detail: {e}")
+                
+                for item in cart.items.all():
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item.product,
+                        size=item.size,
+                        quantity=item.quantity,
+                        price=item.product.get_current_price()
+                    )
+                cart.items.all().delete()
+                print(f"Order created local only: {order.id}")
+                return redirect('order_detail', order_id=order.id)
 
         return JsonResponse({'success': False, 'errors': form.errors})
 
@@ -526,3 +544,46 @@ def proxy_provinces_api(request):
         return JsonResponse(resp.json(), safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def vnpay_payment(request):
+    order_id = request.GET.get('order_id')
+    if not order_id:
+        return JsonResponse({'error': 'Thiếu order_id'}, status=400)
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Không tìm thấy đơn hàng'}, status=404)
+    amount = order.total_price or 10000  # Nếu chưa có giá, test với 10000 VND
+    client_ip = request.META.get('REMOTE_ADDR', '127.0.0.1')
+    from django.conf import settings
+    return_url = settings.VNPAY_RETURN_URL
+    payment_url = build_vnpay_url(order_id, amount, client_ip, return_url)
+    return redirect(payment_url)
+
+@csrf_exempt
+@require_GET
+def vnpay_return(request):
+    params = request.GET.dict()
+    vnp_SecureHash = params.get('vnp_SecureHash')
+    order_id = params.get('vnp_TxnRef')
+    response_code = params.get('vnp_ResponseCode')
+    if not order_id or not vnp_SecureHash:
+        return JsonResponse({'error': 'Thiếu thông tin trả về'}, status=400)
+    if not verify_vnpay_response(params, vnp_SecureHash):
+        return JsonResponse({'error': 'Sai checksum'}, status=400)
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Không tìm thấy đơn hàng'}, status=404)
+    if response_code == '00':
+        order.status = 'Delivered'
+        order.vnpay_transaction_id = params.get('vnp_TransactionNo')
+        order.vnpay_response_code = response_code
+        order.total_price = int(params.get('vnp_Amount', 0)) // 100
+        order.save()
+        return redirect('payment_success')
+    else:
+        order.status = 'Cancelled'
+        order.vnpay_response_code = response_code
+        order.save()
+        return redirect('order_cancel', order_id=order.id)

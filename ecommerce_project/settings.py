@@ -127,6 +127,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "shop/static"),
 ]
 
+# VNPAY CONFIG
+VNPAY_TMN_CODE = 'YOUR_TMN_CODE'
+VNPAY_HASH_SECRET = 'YOUR_HASH_SECRET'
+VNPAY_URL = 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'
+VNPAY_RETURN_URL = 'http://localhost:8000/vnpay_return/'
 
 
 # Default primary key field type

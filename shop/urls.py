@@ -3,7 +3,7 @@ from django.urls import include, path
 from django.shortcuts import render
 from . import views
 from . import chat
-from .views import proxy_provinces_api
+from .views import proxy_provinces_api, vnpay_payment, vnpay_return
 
 def test_view(request):
     return render(request, 'shop/test.html')
@@ -43,4 +43,6 @@ urlpatterns = [
 
 urlpatterns += [
     path('proxy-provinces/', proxy_provinces_api, name='proxy_provinces_api'),
+    path('vnpay_payment/', vnpay_payment, name='vnpay_payment'),
+    path('vnpay_return/', vnpay_return, name='vnpay_return'),
 ]

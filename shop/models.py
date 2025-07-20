@@ -212,6 +212,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='Pending')  # Thêm trường trạng thái
     ghn_order_code = models.CharField(max_length=32, blank=True, null=True, help_text="Mã vận đơn GHN")
+    vnpay_transaction_id = models.CharField(max_length=64, blank=True, null=True, help_text="Mã giao dịch VNPAY")
+    vnpay_response_code = models.CharField(max_length=16, blank=True, null=True, help_text="Mã phản hồi VNPAY")
 
     def __str__(self):
         return f"Order by {self.user.username} - {self.payment_method}"

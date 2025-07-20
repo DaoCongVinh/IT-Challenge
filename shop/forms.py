@@ -89,7 +89,11 @@ class PaymentForm(forms.Form):
     address = forms.CharField(max_length=255, label="Địa chỉ")
     note = forms.CharField(widget=forms.Textarea, required=False, label="Ghi chú")
     payment = forms.ChoiceField(
-        choices=[('COD', 'Thanh toán khi nhận hàng (COD)'), ('MoMo', 'Thanh toán bằng ví MoMo')],
-        label="Phương thức thanh toán",
-        widget=forms.RadioSelect
+        choices=[
+            ("COD", "Thanh toán khi nhận hàng (COD)"),
+            ("MoMo", "Thanh toán online bằng quét mã QR"),
+            ("VNPAY", "Thanh toán online qua VNPAY")
+        ],
+        widget=forms.RadioSelect,
+        label="Phương thức thanh toán"
     )
