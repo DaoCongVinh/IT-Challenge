@@ -995,3 +995,7 @@ a:hover {
 .text-gray-600 { color: var(--gray-600); }
 .text-gray-700 { color: var(--gray-700); }
 .text-gray-900 { color: var(--gray-900); }
+
+.navbar>.container{
+  max-width: fit-content;
+}
