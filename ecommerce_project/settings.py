@@ -142,6 +142,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #deploy
 DEBUG = False
-ALLOWED_HOSTS = ['Vinh2004.pythonanywhere.com']
+ALLOWED_HOSTS = ['it-challenge.onrender.com']
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
