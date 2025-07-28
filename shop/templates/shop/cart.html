@@ -114,12 +114,14 @@
                     <input type="radio" id="cod" name="payment" value="COD" checked>
                     Thanh toán khi nhận hàng (COD)
                 </label>
-        
-                <!-- <label for="online">
+                <label for="momo">
                     <input type="radio" id="momo" name="payment" value="MoMo">
-                    Thanh toán online bằng quét mã QR
-                </label> -->
-                
+                    Thanh toán online bằng quét mã QR (MoMo)
+                </label>
+                <label for="vnpay">
+                    <input type="radio" id="vnpay" name="payment" value="VNPAY">
+                    Thanh toán online qua ví VNPAY
+                </label>
                 <button type="submit" id="payment-button" class="normal">ĐẶT HÀNG: GIAO HÀNG VÀ THU TIỀN TẬN NƠI</button>
             </form>
         </div>
@@ -134,7 +136,7 @@
         // Get references to the radio buttons and button
         const codRadio = document.getElementById('cod');
         const momoRadio = document.getElementById('momo');
-        const discountRow = document.getElementById('cart-discount-amount');
+        const vnpayRadio = document.getElementById('vnpay');
         const paymentButton = document.getElementById('payment-button');
 
         // Function to update button text
@@ -142,13 +144,16 @@
             if (codRadio.checked) {
                 paymentButton.textContent = "ĐẶT HÀNG: GIAO HÀNG VÀ THU TIỀN TẬN NƠI";
             } else if (momoRadio.checked) {
-                paymentButton.textContent = "ĐẶT HÀNG: THANH TOÁN ONLINE BẰNG QUÉT MÃ QR";
+                paymentButton.textContent = "ĐẶT HÀNG: THANH TOÁN ONLINE BẰNG QUÉT MÃ QR (MoMo)";
+            } else if (vnpayRadio.checked) {
+                paymentButton.textContent = "ĐẶT HÀNG: THANH TOÁN ONLINE QUA VÍ VNPAY";
             }
         }
 
         // Add event listeners to radio buttons
         codRadio.addEventListener('change', updateButtonText);
         momoRadio.addEventListener('change', updateButtonText);
+        vnpayRadio.addEventListener('change', updateButtonText);
 
         // Initialize button text on page load
         updateButtonText();

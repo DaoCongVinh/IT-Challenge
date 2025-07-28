@@ -200,6 +200,7 @@ class Order(models.Model):
     PAYMENT_CHOICES = [
         ('COD', 'Thanh toán khi nhận hàng (COD)'),
         ('MoMo', 'Thanh toán online bằng quét mã QR'),
+        ('VNPAY', 'Thanh toán online qua VNPAY'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
